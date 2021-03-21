@@ -11,8 +11,8 @@ class AMR(Dataset):
         self.max_len = max_len
 
     def __getitem__(self, idx):
-        reviewText = self.data.reviewText.iloc[idx].strip()
-        reviewSummary = self.data.summary.iloc[idx].strip()
+        reviewText = str(self.data.iloc[idx, 0]).strip()
+        reviewSummary = str(self.data.iloc[idx, 1]).strip()
         inputs = self.tokenizer(
             reviewSummary,
             reviewText,
@@ -23,8 +23,7 @@ class AMR(Dataset):
             return_attention_mask=True,
             truncation=True)
         item = {key: torch.tensor(val) for key, val in inputs.items()}
-        item['labels'] = torch.tensor(self.data.overall_enc.iloc[idx],
-                                          dtype=torch.long)
+        item['labels'] = torch.tensor(self.data.iloc[idx, 2], dtype=torch.long)
         return item
 
     def __len__(self):
